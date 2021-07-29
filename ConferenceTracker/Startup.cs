@@ -20,7 +20,7 @@ namespace ConferenceTracker
             Configuration = configuration;
         }
 
-        private readonly string _allowedCors = "_allowedOrigins";
+        private readonly string _allowedOrigins = "_allowedOrigins";
 
         public IConfiguration Configuration { get; }
         public string SecretMessage { get; set; }
@@ -44,7 +44,7 @@ namespace ConferenceTracker
             services.AddTransient<ISpeakerRepository, SpeakerRepository>();
             services.AddCors(options =>
             {
-                options.AddPolicy(_allowedCors, builder => { builder.WithOrigins("http://pluralsight.com/"); });
+                options.AddPolicy(_allowedOrigins, builder => { builder.WithOrigins("http://pluralsight.com/"); });
             });
         }
 
@@ -56,10 +56,10 @@ namespace ConferenceTracker
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
-                logger.LogInformation("Environment is in development");
             }
             else
             {
+                logger.LogInformation("Environment is in development");
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
@@ -68,7 +68,7 @@ namespace ConferenceTracker
             using (var context = scope.ServiceProvider.GetService<ApplicationDbContext>())
                 context.Database.EnsureCreated();
 
-            app.UseCors(_allowedCors);
+            app.UseCors(_allowedOrigins);
 
             app.UseHttpsRedirection();
 
